@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TallerReloj.Common", "Talle
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TallerReloj.Function", "TallerReloj.Function\TallerReloj.Function.csproj", "{D2756ABB-8035-4E6F-B1E1-DB09AE57BD03}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TallerReloj.Test", "TallerReloj.Test\TallerReloj.Test.csproj", "{897F24D3-56EE-4C63-9001-14C571D6D7DD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TallerReloj.Test", "TallerReloj.Test\TallerReloj.Test.csproj", "{897F24D3-56EE-4C63-9001-14C571D6D7DD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
