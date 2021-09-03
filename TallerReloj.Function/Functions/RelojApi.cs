@@ -19,18 +19,17 @@ namespace TallerReloj.Function.Functions
         [FunctionName(nameof(CreateEntry))]
         public static async Task<IActionResult> CreateEntry(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "Reloj")] HttpRequest req,
-            [Table("Reloj", Connection = "UseDevelopmentStorage")] CloudTable RelojTable,
+            [Table("Reloj", Connection = "AzureWebJobsStorage")] CloudTable RelojTable,
             ILogger log)
         {
             log.LogInformation("Recieved a new entry.");
 
-            string name = req.Query["name"];
+            
 
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             Reloj relojito = JsonConvert.DeserializeObject<Reloj>(requestBody);
 
-            if (string.IsNullOrEmpty(relojito?.IdEmpleado.ToString()) || relojito.IdEmpleado <= 0 ||
-                string.IsNullOrEmpty(relojito?.Tipo.ToString()) || relojito.Tipo < 0 || relojito.Tipo > 1)
+            if (relojito.IdEmpleado <= 0  || relojito.Tipo < 0 || relojito.Tipo > 1)
             {
                 return new BadRequestObjectResult(new Response
                 {
@@ -38,13 +37,12 @@ namespace TallerReloj.Function.Functions
                     Message = "the input needs employee id and type"
                 });
             }
-            DateTime date = DateTime.Now;
-            string dat = date.Date.ToString("dd-MM-yyyy");
+            
+
             RelojEntity relojentity = new RelojEntity
             {
-
-                Fecha = DateTime.Parse(dat),
-                Hora = DateTime.UtcNow,
+                
+                Fecha = DateTime.UtcNow,
                 ETag = "*",
                 PartitionKey = "RELOJ",
                 RowKey = Guid.NewGuid().ToString(),
@@ -70,5 +68,63 @@ namespace TallerReloj.Function.Functions
                 Result = relojentity
             });
         }
+
+        [FunctionName(nameof(UpdateEntry))]
+        public static async Task<IActionResult> UpdateEntry(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "Reloj/{id}")] HttpRequest req,
+            [Table("Reloj", Connection = "AzureWebJobsStorage")] CloudTable RelojTable,
+            string id,
+            ILogger log)
+        {
+            log.LogInformation($"Update for entry: {id}, received");
+
+          
+
+            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+            Reloj relojito = JsonConvert.DeserializeObject<Reloj>(requestBody);
+
+            //validate todo id
+            TableOperation findOperation = TableOperation.Retrieve<RelojEntity>("RELOJ", id);
+            TableResult findResult = await RelojTable.ExecuteAsync(findOperation);
+
+            if (findResult.Result == null)
+            {
+                return new BadRequestObjectResult(new Response
+                {
+                    IsSuccess = false,
+                    Message = "the  employee not found"
+                });
+            }
+
+            //update entry
+            RelojEntity relojEntity = (RelojEntity)findResult.Result;
+            relojEntity.Tipo = relojito.Tipo;
+            if( relojito.Tipo > 0 || relojito.Tipo < 1)
+            {
+                relojEntity.Tipo = relojEntity.Tipo;
+            }
+
+           
+
+
+            
+
+            TableOperation addOperation = TableOperation.Replace(relojEntity);
+            await RelojTable.ExecuteAsync(addOperation);
+
+            string message = $"entry: {id} update in table";
+            log.LogInformation(message);
+
+
+            return new OkObjectResult(new Response
+            {
+                IsSuccess = true,
+                Message = message,
+                Result = relojEntity
+            });
+        }
+
+
+
     }
 }

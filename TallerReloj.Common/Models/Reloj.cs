@@ -8,7 +8,7 @@ namespace TallerReloj.Common.Models
 
         public DateTime Fecha { get; set; }
 
-        public DateTime Hora { get; set; }
+        
         public int Tipo { get; set; }
 
         public bool Consolidado { get; set; }
