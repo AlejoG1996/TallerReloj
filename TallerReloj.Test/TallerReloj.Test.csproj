@@ -20,4 +20,8 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\TallerReloj.Function\TallerReloj.Function.csproj" />
+  </ItemGroup>
+
 </Project>

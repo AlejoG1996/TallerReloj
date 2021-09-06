@@ -7,6 +7,10 @@ namespace TallerReloj.Function.Entities
 {
     public class RelojEntity: TableEntity
     {
+        public RelojEntity()
+        {
+            
+        }
         public int IdEmpleado { get; set; }
 
         public DateTime Fecha { get; set; }
